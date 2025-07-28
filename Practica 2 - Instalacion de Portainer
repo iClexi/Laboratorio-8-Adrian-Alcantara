@@ -1,0 +1,26 @@
+# Práctica 2: Instalación de Portainer
+
+# 1. Descargar imagen de Portainer
+sudo docker pull portainer/portainer-ce:latest
+
+# 2. Crear volumen para Portainer
+sudo docker volume create portainer_data
+
+# 3. Lanzar contenedor de Portainer
+sudo docker run -d \
+  --name portainer \
+  -p 8000:8000 \
+  -p 9443:9443 \
+  -p 9000:9000 \
+  -v /var/run/docker.sock:/var/run/docker.sock \
+  -v portainer_data:/data \
+  portainer/portainer-ce:latest
+
+# 4. Interfaz gráfica:
+Abrir https://127.0.0.1:9443 → click "Get Started" → seleccionar "Local" → click "Connect"
+
+# 5. Detener contenedor de NGINX:
+En Portainer → Containers → mi-nginx → click icono ■ (Stop)
+
+# 6. Verificar en navegador:
+Abrir http://127.0.0.1:8888 (debe dar error de conexión)
