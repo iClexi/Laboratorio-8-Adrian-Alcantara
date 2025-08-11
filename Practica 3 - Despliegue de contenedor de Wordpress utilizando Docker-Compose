@@ -1,51 +1,62 @@
-# Práctica 3: Despliegue de WordPress con Docker Compose
+# ===============================================
+# PRÁCTICA 3: DESPLIEGUE DE WORDPRESS CON DOCKER COMPOSE
+# ===============================================
 
-# 1. Instalar Docker Compose
+# 1. Actualizar repos e instalar Docker Compose
 sudo apt update && sudo apt install -y docker-compose
 
-# 2. Crear proyecto y entrar
+# 2. Crear carpeta del proyecto y entrar
 mkdir wordpress-project
 cd wordpress-project
 
-# 3. Crear docker-compose.yml con nano:
-nano docker-compose.yml
-  (Contenido:
-   version: '3.8'
-   services:
-     db:
-       image: mysql:5.7
-       container_name: wp_db
-       restart: unless-stopped
-       environment:
-         MYSQL_ROOT_PASSWORD: rootpassword
-         MYSQL_DATABASE: wordpress
-         MYSQL_USER: wp_user
-         MYSQL_PASSWORD: wp_pass
-       volumes:
-         - db_data:/var/lib/mysql
+# 3. Crear archivo docker-compose.yml con nano
+sudo nano docker-compose.yml
+# Contenido:
+# version: '3.8'
+# services:
+#   db:
+#     image: mysql:5.7               # Usamos MySQL 5.7 por compatibilidad
+#     container_name: wp_db
+#     restart: unless-stopped
+#     environment:
+#       MYSQL_ROOT_PASSWORD: rootpassword
+#       MYSQL_DATABASE: wordpress
+#       MYSQL_USER: wp_user
+#       MYSQL_PASSWORD: wp_pass
+#     volumes:
+#       - db_data:/var/lib/mysql     # Guarda los datos para que no se pierdan
+#
+#   wordpress:
+#     image: wordpress:latest
+#     container_name: wp_app
+#     depends_on:
+#       - db                         # Inicia primero la DB
+#     restart: unless-stopped
+#     ports:
+#       - "8000:80"                   # Acceso en puerto 8000
+#     environment:
+#       WORDPRESS_DB_HOST: db:3306
+#       WORDPRESS_DB_USER: wp_user
+#       WORDPRESS_DB_PASSWORD: wp_pass
+#       WORDPRESS_DB_NAME: wordpress
+#     volumes:
+#       - ./html:/var/www/html        # Carpeta local para ficheros WP
+#
+# volumes:
+#   db_data:
 
-     wordpress:
-       image: wordpress:latest
-       container_name: wp_app
-       depends_on:
-         - db
-       restart: unless-stopped
-       ports:
-         - "8000:80"
-       environment:
-         WORDPRESS_DB_HOST: db:3306
-         WORDPRESS_DB_USER: wp_user
-         WORDPRESS_DB_PASSWORD: wp_pass
-         WORDPRESS_DB_NAME: wordpress
-       volumes:
-         - ./html:/var/www/html
-
-   volumes:
-     db_data:
-  )
-
-# 4. Desplegar con Docker Compose
+# 4. Levantar el stack de WordPress
 sudo docker-compose up -d
 
-# 5. Probar y configurar WordPress:
-Abrir http://127.0.0.1:8000 → seguir asistente de instalación (idioma, título, usuario, contraseña)
+# 5. Verificar que los contenedores están corriendo
+sudo docker ps
+
+# 6. Abrir en el navegador y seguir asistente
+# http://IP_DEL_SERVER:8000
+# - Elegir idioma
+# - Poner título del sitio
+# - Crear usuario y contraseña de administrador
+# - Guardar credenciales
+
+# 7. (Opcional) Detener todo el stack
+# sudo docker-compose down
