@@ -1,44 +1,63 @@
-# Práctica 1: Instalación y configuración de Docker + NGINX
+# ===============================================
+# PRÁCTICA 1: INSTALACIÓN Y CONFIGURACIÓN DE DOCKER + NGINX
+# ===============================================
 
-# 1. Actualizar e instalar dependencias
+# 1. Actualizar repositorios e instalar dependencias para Docker
 sudo apt update && sudo apt install -y apt-transport-https ca-certificates curl gnupg lsb-release
 
-# 2. Añadir clave GPG de Docker
+# 2. Descargar e instalar la clave GPG oficial de Docker
 curl -fsSL https://download.docker.com/linux/ubuntu/gpg \
   | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
 
-# 3. Configurar repositorio de Docker
+# 3. Añadir el repositorio oficial de Docker a la lista de fuentes APT
 echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] \
-  https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" \
+https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" \
   | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
 
-# 4. Instalar Docker Engine
+# 4. Instalar Docker Engine y sus componentes
 sudo apt update
 sudo apt install -y docker-ce docker-ce-cli containerd.io
 
-# 5. Arrancar Docker
+# 5. Habilitar y arrancar el servicio Docker
 sudo systemctl enable --now docker
 
-# 6. Verificar instalación
+# 6. Verificar instalación de Docker
 sudo docker version
 
-# 7. Crear directorio para web
+
+# ===============================================
+# CONFIGURACIÓN DE NGINX EN CONTENEDOR
+# ===============================================
+
+# 7. Crear carpeta para los archivos web
 sudo mkdir -p /home/website
+
+# Cambiar permisos para que el usuario actual y el grupo 'holi' tengan acceso
 sudo chown $USER:holi /home/website
 
-# 8. Crear página HTML con nano:
-nano /home/website/index.html
-  (<html><body><h1>Michael</h1><h2>Matrícula: 20250845</h2></body></html>)
+# 8. Crear el archivo HTML principal
+sudo nano /home/website/index.html
+# CONTENIDO SUGERIDO:
+# <html>
+#   <body>
+#     <h1>Michael</h1>
+#     <h2>Matrícula: 20250845</h2>
+#   </body>
+# </html>
 
-# 9. Descargar imagen de NGINX
+# 9. Descargar la imagen más reciente de NGINX desde Docker Hub
 sudo docker pull nginx:latest
 
-# 10. Lanzar contenedor NGINX
+# 10. Ejecutar el contenedor NGINX
+# -d = modo detach (en segundo plano)
+# --name = nombre del contenedor
+# -p 8888:80 = mapear puerto 8888 de la máquina al 80 del contenedor
+# -v ...:ro = montar carpeta /home/website en el contenedor como solo lectura
 sudo docker run -d \
   --name mi-nginx \
   -p 8888:80 \
   -v /home/website:/usr/share/nginx/html:ro \
   nginx:latest
 
-# 11. Probar en navegador:
-Abrir http://127.0.0.1:8888
+# 11. Probar en el navegador desde la máquina local o cliente
+# http://127.0.0.1:8888
