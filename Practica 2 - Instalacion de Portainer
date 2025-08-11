@@ -1,12 +1,72 @@
-# Práctica 2: Instalación de Portainer
+# ===============================================
+# INSTALACIÓN DE DOCKER + NGINX + PORTAINER
+# ===============================================
 
-# 1. Descargar imagen de Portainer
+# 1. Actualizar repositorios e instalar dependencias de Docker
+sudo apt update && sudo apt install -y apt-transport-https ca-certificates curl gnupg lsb-release
+
+# 2. Descargar e instalar la clave GPG oficial de Docker
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg \
+  | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
+
+# 3. Añadir el repositorio oficial de Docker
+echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] \
+https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" \
+  | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+
+# 4. Instalar Docker Engine y sus componentes
+sudo apt update
+sudo apt install -y docker-ce docker-ce-cli containerd.io
+
+# 5. Habilitar y arrancar Docker
+sudo systemctl enable --now docker
+
+# 6. Verificar instalación
+sudo docker version
+
+
+# ===============================================
+# CONFIGURAR NGINX EN CONTENEDOR
+# ===============================================
+
+# 7. Crear carpeta para la web
+sudo mkdir -p /home/website
+sudo chown $USER:$USER /home/website
+
+# 8. Crear archivo HTML con nano
+sudo nano /home/website/index.html
+# Contenido sugerido:
+# <html>
+#   <body>
+#     <h1>Michael</h1>
+#     <h2>Matrícula: 20250845</h2>
+#   </body>
+# </html>
+
+# 9. Descargar imagen NGINX
+sudo docker pull nginx:latest
+
+# 10. Ejecutar contenedor NGINX
+sudo docker run -d \
+  --name mi-nginx \
+  -p 8888:80 \
+  -v /home/website:/usr/share/nginx/html:ro \
+  nginx:latest
+
+# 11. Probar en navegador: http://IP_DEL_SERVER:8888
+
+
+# ===============================================
+# INSTALAR Y CONFIGURAR PORTAINER
+# ===============================================
+
+# 12. Descargar imagen de Portainer Community Edition
 sudo docker pull portainer/portainer-ce:latest
 
-# 2. Crear volumen para Portainer
+# 13. Crear volumen para datos de Portainer
 sudo docker volume create portainer_data
 
-# 3. Lanzar contenedor de Portainer
+# 14. Ejecutar contenedor Portainer
 sudo docker run -d \
   --name portainer \
   -p 8000:8000 \
@@ -16,11 +76,12 @@ sudo docker run -d \
   -v portainer_data:/data \
   portainer/portainer-ce:latest
 
-# 4. Interfaz gráfica:
-Abrir https://127.0.0.1:9443 → click "Get Started" → seleccionar "Local" → click "Connect"
+# 15. Abrir interfaz gráfica de Portainer
+# http://IP_DEL_SERVER:9000
+# (Configurar usuario y contraseña la primera vez)
 
-# 5. Detener contenedor de NGINX:
-En Portainer → Containers → mi-nginx → click icono ■ (Stop)
+# 16. Detener NGINX desde Portainer
+# En Portainer → Containers → mi-nginx → botón Stop
 
-# 6. Verificar en navegador:
-Abrir http://127.0.0.1:8888 (debe dar error de conexión)
+# 17. Verificar en navegador: http://IP_DEL_SERVER:8888
+# (Debe dar error porque el contenedor NGINX está detenido)
