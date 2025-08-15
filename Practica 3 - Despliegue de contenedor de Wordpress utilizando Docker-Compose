@@ -61,3 +61,110 @@ sudo docker ps
 
 # 7. (Opcional) Detener todo el stack
 # sudo docker-compose down
+
+
+
+
+
+
+
+
+
+# PRÁCTICA 3.5: DESPLIEGUE DE PORTAINER CON DOCKER COMPOSE
+# ======================================================
+
+# 1. Actualizar repos e instalar Docker Compose
+sudo apt update && sudo apt install -y docker-compose
+
+# 2. Crear carpeta del proyecto y entrar
+mkdir portainer-project
+cd portainer-project
+
+# 3. Crear archivo docker-compose.yml con nano
+sudo nano docker-compose.yml
+# Contenido:
+version: '3.8'
+
+services:
+  portainer:
+    image: portainer/portainer-ce:latest    # Imagen de Portainer Community Edition
+    container_name: portainer
+    restart: unless-stopped
+    ports:
+      - "9443:9443"                         # Interfaz HTTPS
+      - "9000:9000"                         # Interfaz HTTP
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./portainer_data:/data              # Datos persistentes de Portainer
+
+# 4. Levantar el stack de Portainer
+sudo docker-compose up -d
+
+# 5. Verificar que el contenedor está corriendo
+sudo docker ps
+
+# 6. Abrir en el navegador y configurar
+# http://IP_DEL_SERVER:9000
+# - Crear usuario admin
+# - Conectar Portainer al Docker local
+# - Administrar contenedores, redes y volúmenes gráficamente
+
+# 7. (Opcional) Detener todo el stack
+# sudo docker-compose down
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# PRÁCTICA 3.9: DESPLIEGUE DE CUPS CON DOCKER COMPOSE
+# ===============================================
+
+# 1. Actualizar repos e instalar Docker Compose
+sudo apt update && sudo apt install -y docker-compose
+
+# 2. Crear carpeta del proyecto y entrar
+mkdir cups-project
+cd cups-project
+
+# 3. Crear archivo docker-compose.yml con nano
+sudo nano docker-compose.yml
+# Contenido:
+version: '3.8'
+
+services:
+  cups:
+    image: olbat/cupsd                # Imagen de CUPS
+    container_name: cups_server
+    restart: unless-stopped
+    ports:
+      - "631:631"                     # Puerto estándar de CUPS
+    environment:
+      - CUPS_ADMIN_PASSWORD=admin123  # Contraseña del usuario admin
+    volumes:
+      - ./cups-data:/etc/cups         # Configuración persistente
+      - ./cups-logs:/var/log/cups     # Logs persistentes
+
+# 4. Levantar el stack de CUPS
+sudo docker-compose up -d
+
+# 5. Verificar que el contenedor está corriendo
+sudo docker ps
+
+# 6. Abrir en el navegador y configurar
+# http://IP_DEL_SERVER:631/admin
+# - Iniciar sesión con usuario: admin / contraseña: admin123
+# - Añadir impresoras y gestionar colas de impresión
+
+# 7. (Opcional) Detener todo el stack
+# sudo docker-compose down
